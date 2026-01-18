@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Token Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .token-display {
+            word-break: break-all;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 JWT Authentication Tester</h1>
+    
+    <!-- Login Section -->
+    <div class="container">
+        <h2>1. Login & Get Tokens</h2>
+        <div class="form-group">
+            <label for="baseUrl">Base URL:</label>
+            <input type="text" id="baseUrl" value="http://localhost:8080">
+        </div>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" value="testuser">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" value="password123">
+        </div>
+        <button onclick="login()">Login</button>
+        <div id="loginResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <!-- Token Display -->
+    <div class="container" id="tokenContainer" style="display: none;">
+        <h2>2. Tokens</h2>
+        <div>
+            <label>Access Token:</label>
+            <div id="accessTokenDisplay" class="token-display"></div>
+        </div>
+        <div>
+            <label>Refresh Token:</label>
+            <div id="refreshTokenDisplay" class="token-display"></div>
+        </div>
+    </div>
+
+    <!-- JWT Decoder -->
+    <div class="container">
+        <h2>3. JWT Token Decoder</h2>
+        <div class="form-group">
+            <label for="jwtToken">JWT Token:</label>
+            <textarea id="jwtToken" rows="4" placeholder="Paste your JWT token here..."></textarea>
+        </div>
+        <button onclick="decodeJWT()">Decode JWT</button>
+        <div id="jwtDecoded" class="response" style="display: none;"></div>
+    </div>
+
+    <!-- API Testing -->
+    <div class="container">
+        <h2>4. Test API Endpoints</h2>
+        <div class="form-group">
+            <label for="testToken">Access Token for Testing:</label>
+            <textarea id="testToken" rows="2" placeholder="Paste access token here..."></textarea>
+        </div>
+        <button onclick="testPublicEndpoint()">Test Public Endpoint</button>
+        <button onclick="testProtectedEndpoint()">Test Protected Endpoint</button>
+        <button onclick="testUserEndpoint()">Test User Endpoint</button>
+        <button onclick="testAdminEndpoint()">Test Admin Endpoint</button>
+        <div id="apiResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <!-- Refresh Token Testing -->
+    <div class="container">
+        <h2>5. Refresh Token</h2>
+        <div class="form-group">
+            <label for="refreshTokenInput">Refresh Token:</label>
+            <textarea id="refreshTokenInput" rows="2" placeholder="Paste refresh token here..."></textarea>
+        </div>
+        <button onclick="refreshToken()">Refresh Access Token</button>
+        <div id="refreshResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <script>
+        let currentTokens = {};
+
+        async function login() {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const responseDiv = document.getElementById('loginResponse');
+            
+            try {
+                const response = await fetch(`${baseUrl}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.text();
+                
+                if (response.ok) {
+                    const jsonData = JSON.parse(data);
+                    currentTokens = jsonData;
+                    
+                    // Display tokens
+                    document.getElementById('accessTokenDisplay').textContent = jsonData.accessToken;
+                    document.getElementById('refreshTokenDisplay').textContent = jsonData.refreshToken;
+                    document.getElementById('tokenContainer').style.display = 'block';
+                    
+                    // Auto-fill test fields
+                    document.getElementById('jwtToken').value = jsonData.accessToken;
+                    document.getElementById('testToken').value = jsonData.accessToken;
+                    document.getElementById('refreshTokenInput').value = jsonData.refreshToken;
+                    
+                    responseDiv.className = 'response success';
+                    responseDiv.textContent = JSON.stringify(jsonData, null, 2);
+                } else {
+                    responseDiv.className = 'response error';
+                    responseDiv.textContent = `Error ${response.status}: ${data}`;
+                }
+                
+                responseDiv.style.display = 'block';
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Network Error: ${error.message}`;
+                responseDiv.style.display = 'block';
+            }
+        }
+
+        function decodeJWT() {
+            const token = document.getElementById('jwtToken').value.trim();
+            const responseDiv = document.getElementById('jwtDecoded');
+            
+            if (!token) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = 'Please enter a JWT token';
+                responseDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const parts = token.split('.');
+                if (parts.length !== 3) {
+                    throw new Error('Invalid JWT format');
+                }
+                
+                const header = JSON.parse(atob(parts[0]));
+                const payload = JSON.parse(atob(parts[1]));
+                
+                const decoded = {
+                    header: header,
+                    payload: payload,
+                    signature: parts[2]
+                };
+                
+                // Add human-readable dates
+                if (payload.iat) {
+                    decoded.payload.iat_readable = new Date(payload.iat * 1000).toLocaleString();
+                }
+                if (payload.exp) {
+                    decoded.payload.exp_readable = new Date(payload.exp * 1000).toLocaleString();
+                    decoded.payload.expired = Date.now() > (payload.exp * 1000);
+                }
+                
+                responseDiv.className = 'response success';
+                responseDiv.textContent = JSON.stringify(decoded, null, 2);
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Decode Error: ${error.message}`;
+            }
+            
+            responseDiv.style.display = 'block';
+        }
+
+        async function testEndpoint(endpoint, requiresAuth = false) {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const token = document.getElementById('testToken').value.trim();
+            const responseDiv = document.getElementById('apiResponse');
+            
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (requiresAuth) {
+                if (!token) {
+                    responseDiv.className = 'response error';
+                    responseDiv.textContent = 'Access token required for this endpoint';
+                    responseDiv.style.display = 'block';
+                    return;
+                }
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            try {
+                const response = await fetch(`${baseUrl}${endpoint}`, {
+                    method: 'GET',
+                    headers: headers
+                });
+                
+                const data = await response.text();
+                let jsonData;
+                
+                try {
+                    jsonData = JSON.parse(data);
+                } catch {
+                    jsonData = data;
+                }
+                
+                const result = {
+                    status: response.status,
+                    statusText: response.statusText,
+                    endpoint: endpoint,
+                    response: jsonData
+                };
+                
+                if (response.ok) {
+                    responseDiv.className = 'response success';
+                } else {
+                    responseDiv.className = 'response error';
+                }
+                
+                responseDiv.textContent = JSON.stringify(result, null, 2);
+                responseDiv.style.display = 'block';
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Network Error: ${error.message}`;
+                responseDiv.style.display = 'block';
+            }
+        }
+
+        function testPublicEndpoint() {
+            testEndpoint('/api/test/public', false);
+        }
+
+        function testProtectedEndpoint() {
+            testEndpoint('/api/test/protected', true);
+        }
+
+        function testUserEndpoint() {
+            testEndpoint('/api/test/user', true);
+        }
+
+        function testAdminEndpoint() {
+            testEndpoint('/api/test/admin', true);
+        }
+
+        async function refreshToken() {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const refreshTokenValue = document.getElementById('refreshTokenInput').value.trim();
+            const responseDiv = document.getElementById('refreshResponse');
+            
+            if (!refreshTokenValue) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = 'Please enter a refresh token';
+                responseDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${baseUrl}/auth/refresh`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ refreshToken: refreshTokenValue })
+                });
+                
+                const data = await response.text();
+                
+                if (response.ok) {
+                    const jsonData = JSON.parse(data);
+                    
+                    // Update test token field with new access token
+                    document.getElementById('testToken').value = jsonData.accessToken;
+                    document.getElementById('jwtToken').value = jsonData.accessToken;
+                    
+                    responseDiv.className = 'response success';
+                    responseDiv.textContent = JSON.stringify(jsonData, null, 2);
+                } else {
+                    responseDiv.className = 'response error';
+                    responseDiv.textContent = `Error ${response.status}: ${data}`;
+                }
+                
+                responseDiv.style.display = 'block';
+            } catch (error) {
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Network Error: ${error.message}`;
+                responseDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

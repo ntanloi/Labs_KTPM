@@ -1,0 +1,53 @@
+# JWT Authentication API Testing
+# Sử dụng với VS Code REST Client extension hoặc IntelliJ HTTP Client
+
+### 1. Test Public Endpoint (không cần authentication)
+GET http://localhost:8080/api/test/public
+Content-Type: application/json
+
+### 2. Đăng ký user mới
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "password": "password123"
+}
+
+### 3. Đăng nhập để lấy tokens
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "password": "password123"
+}
+
+### 4. Test Protected Endpoint (cần access token)
+# Thay YOUR_ACCESS_TOKEN bằng accessToken từ response login
+GET http://localhost:8080/api/test/protected
+Authorization: Bearer YOUR_ACCESS_TOKEN
+
+### 5. Test User Endpoint (cần USER_READ permission)
+GET http://localhost:8080/api/test/user
+Authorization: Bearer YOUR_ACCESS_TOKEN
+
+### 6. Test Admin Endpoint (cần ADMIN role)
+GET http://localhost:8080/api/test/admin
+Authorization: Bearer YOUR_ACCESS_TOKEN
+
+### 7. Refresh Access Token
+POST http://localhost:8080/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "YOUR_REFRESH_TOKEN"
+}
+
+### 8. Logout (revoke refresh tokens)
+POST http://localhost:8080/auth/logout
+Authorization: Bearer YOUR_ACCESS_TOKEN
+
+### 9. Test với token đã logout (should fail)
+GET http://localhost:8080/api/test/protected
+Authorization: Bearer YOUR_ACCESS_TOKEN
