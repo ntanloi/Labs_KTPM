@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Adapter Pattern Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .pattern-header {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .json-card {
+            border-left: 4px solid #28a745;
+        }
+        .xml-card {
+            border-left: 4px solid #dc3545;
+        }
+        .conversion-card {
+            border-left: 4px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-code"></i> Design Patterns Demo
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> Trang chủ
+                </a>
+                <a class="nav-link" href="/observer">
+                    <i class="fas fa-bell"></i> Observer
+                </a>
+                <a class="nav-link active" href="/adapter">
+                    <i class="fas fa-exchange-alt"></i> Adapter
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pattern-header">
+        <div class="container text-center">
+            <h1><i class="fas fa-exchange-alt"></i> Adapter Pattern</h1>
+            <p class="lead">Chuyển đổi dữ liệu giữa XML và JSON</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- JSON Processing -->
+            <div class="col-md-6 mb-4">
+                <div class="card json-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-code"></i> JSON Processing</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="/adapter/process-json">
+                            <div class="mb-3">
+                                <label for="jsonData" class="form-label">JSON Data:</label>
+                                <textarea class="form-control" id="jsonData" name="jsonData" rows="8" 
+                                          th:text="${sampleJson}" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-play"></i> Process JSON
+                            </button>
+                        </form>
+                        
+                        <!-- JSON Result -->
+                        <div th:if="${jsonResult != null}" class="mt-3">
+                            <h6 class="text-success">✅ Kết quả JSON:</h6>
+                            <div class="code-block" th:text="${jsonResult}"></div>
+                        </div>
+                        
+                        <div th:if="${jsonError != null}" class="mt-3">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> <span th:text="${jsonError}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XML Processing -->
+            <div class="col-md-6 mb-4">
+                <div class="card xml-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-file-code"></i> XML Processing</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="/adapter/process-xml">
+                            <div class="mb-3">
+                                <label for="xmlData" class="form-label">XML Data:</label>
+                                <textarea class="form-control" id="xmlData" name="xmlData" rows="8" 
+                                          th:text="${sampleXml}" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-play"></i> Process XML
+                            </button>
+                        </form>
+                        
+                        <!-- XML Result -->
+                        <div th:if="${xmlResult != null}" class="mt-3">
+                            <h6 class="text-success">✅ Kết quả XML:</h6>
+                            <div class="code-block" th:text="${xmlResult}"></div>
+                        </div>
+                        
+                        <div th:if="${xmlError != null}" class="mt-3">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> <span th:text="${xmlError}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversion Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card conversion-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-exchange-alt"></i> Data Conversion (Adapter Pattern)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>JSON → XML Conversion</h6>
+                                <form method="post" action="/adapter/convert-json-to-xml">
+                                    <div class="mb-3">
+                                        <textarea class="form-control" name="jsonData" rows="6" 
+                                                  th:text="${sampleJson}" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="fas fa-arrow-right"></i> Convert to XML
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6>XML → JSON Conversion</h6>
+                                <form method="post" action="/adapter/convert-xml-to-json">
+                                    <div class="mb-3">
+                                        <textarea class="form-control" name="xmlData" rows="6" 
+                                                  th:text="${sampleXml}" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="fas fa-arrow-right"></i> Convert to JSON
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Conversion Results -->
+                        <div th:if="${conversionSuccess != null}" class="mt-4">
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i> 
+                                Chuyển đổi thành công: <strong th:text="${conversionType}"></strong>
+                            </div>
+                        </div>
+                        
+                        <div th:if="${conversionError != null}" class="mt-4">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> <span th:text="${conversionError}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pattern Info -->
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <!-- Results Display -->
+                <div th:if="${jsonResult != null or xmlResult != null}" class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-eye"></i> Kết quả</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${jsonResult != null}">
+                            <h6>JSON Output:</h6>
+                            <div class="code-block" th:text="${jsonResult}"></div>
+                        </div>
+                        <div th:if="${xmlResult != null}" class="mt-3">
+                            <h6>XML Output:</h6>
+                            <div class="code-block" th:text="${xmlResult}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6><i class="fas fa-info-circle"></i> Adapter Pattern</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Mục đích:</strong> Cho phép các interface không tương thích làm việc cùng nhau.</p>
+                        <p><strong>Ứng dụng:</strong></p>
+                        <ul>
+                            <li>Data format conversion</li>
+                            <li>Legacy system integration</li>
+                            <li>Third-party library wrapper</li>
+                        </ul>
+                        <p><strong>Lợi ích:</strong></p>
+                        <ul>
+                            <li>Tái sử dụng code</li>
+                            <li>Tương thích interface</li>
+                            <li>Separation of concerns</li>
+                        </ul>
+                        
+                        <div class="mt-3">
+                            <h6>Components:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-circle text-success"></i> <strong>Target:</strong> DataProcessor</li>
+                                <li><i class="fas fa-circle text-danger"></i> <strong>Adaptee:</strong> XmlService</li>
+                                <li><i class="fas fa-circle text-info"></i> <strong>Adapter:</strong> XmlToJsonAdapter</li>
+                                <li><i class="fas fa-circle text-warning"></i> <strong>Client:</strong> JsonService</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2024 Design Patterns Demo - Spring Boot Application</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
