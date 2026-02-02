@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ - Hệ thống quản lý thư viện</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white"><i class="fas fa-book"></i> Thư viện</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">
+                                <i class="fas fa-home"></i> Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/books">
+                                <i class="fas fa-book-open"></i> Danh sách sách
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/books/add">
+                                <i class="fas fa-plus"></i> Thêm sách mới
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/search">
+                                <i class="fas fa-search"></i> Tìm kiếm sách
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/overdue">
+                                <i class="fas fa-exclamation-triangle"></i> Sách quá hạn
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="pt-3 pb-2 mb-3">
+                    <h1 class="h2 mb-4">
+                        <i class="fas fa-home"></i> Trang chủ - Hệ thống quản lý thư viện
+                    </h1>
+
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="card stat-card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-book fa-2x mb-2"></i>
+                                    <h3 th:text="${totalBooks}">0</h3>
+                                    <p class="mb-0">Tổng số sách</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card stat-card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                    <h3 th:text="${availableBooks}">0</h3>
+                                    <p class="mb-0">Sách có sẵn</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card stat-card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-hand-holding fa-2x mb-2"></i>
+                                    <h3 th:text="${borrowedBooks}">0</h3>
+                                    <p class="mb-0">Sách đã mượn</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card stat-card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                                    <h3 th:text="${overdueBooks}">0</h3>
+                                    <p class="mb-0">Sách quá hạn</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-bolt"></i> Thao tác nhanh</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-2">
+                                            <a href="/books/add" class="btn btn-primary w-100">
+                                                <i class="fas fa-plus"></i> Thêm sách mới
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <a href="/search" class="btn btn-outline-primary w-100">
+                                                <i class="fas fa-search"></i> Tìm kiếm sách
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <a href="/books" class="btn btn-outline-primary w-100">
+                                                <i class="fas fa-list"></i> Xem tất cả sách
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <a href="/overdue" class="btn btn-outline-danger w-100">
+                                                <i class="fas fa-exclamation-triangle"></i> Sách quá hạn
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Books -->
+                    <div class="row" th:if="${recentBooks != null and !recentBooks.empty}">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-clock"></i> Sách mới nhất</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3" th:each="book : ${recentBooks}">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h6 class="card-title" th:text="${book.title}">Tên sách</h6>
+                                                    <p class="card-text">
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-user"></i> <span th:text="${book.author}">Tác giả</span><br>
+                                                            <i class="fas fa-tag"></i> <span th:text="${book.genre}">Thể loại</span><br>
+                                                            <i class="fas fa-info-circle"></i> <span th:text="${book.bookType}">Loại sách</span>
+                                                        </small>
+                                                    </p>
+                                                    <span class="badge" th:classappend="${book.available ? 'bg-success' : 'bg-danger'}" 
+                                                          th:text="${book.available ? 'Có sẵn' : 'Đã mượn'}">Trạng thái</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Design Patterns Info -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-code"></i> Design Patterns được sử dụng</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <h6><i class="fas fa-crown"></i> Singleton Pattern</h6>
+                                            <p class="small text-muted">LibraryService được quản lý như một singleton bởi Spring Framework</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <h6><i class="fas fa-industry"></i> Factory Method Pattern</h6>
+                                            <p class="small text-muted">Tạo các loại sách khác nhau (Sách giấy, E-book, Audiobook)</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <h6><i class="fas fa-chess"></i> Strategy Pattern</h6>
+                                            <p class="small text-muted">Các chiến lược tìm kiếm theo tên, tác giả, thể loại</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <h6><i class="fas fa-eye"></i> Observer Pattern</h6>
+                                            <p class="small text-muted">Thông báo khi có sách mới, mượn/trả sách, quá hạn</p>
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <h6><i class="fas fa-layer-group"></i> Decorator Pattern</h6>
+                                            <p class="small text-muted">Thêm tính năng gia hạn và phiên bản đặc biệt khi mượn sách</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
