@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nginx Static Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --border: #2a2a3a;
+      --accent: #00e5a0;
+      --accent2: #7c5cfc;
+      --text: #e8e8f0;
+      --muted: #666688;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow blobs */
+    body::after {
+      content: '';
+      position: fixed;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,92,252,0.15) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob2 {
+      position: fixed;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,160,0.12) 0%, transparent 70%);
+      bottom: -80px; left: -80px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,229,160,0.1);
+      border: 1px solid rgba(0,229,160,0.3);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+
+    .badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    h1 span.green { color: var(--accent); }
+    h1 span.purple { color: var(--accent2); }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .cards {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.6rem;
+      min-width: 140px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .card-icon { font-size: 1.6rem; margin-bottom: 0.5rem; }
+    .card-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .card-value { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 2px; }
+    .card-value.green { color: var(--accent); }
+
+    .footer {
+      position: fixed;
+      bottom: 1.5rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      z-index: 1;
+      animation: fadeUp 0.8s 0.6s ease both;
+    }
+  </style>
+</head>
+<body>
+  <div class="blob2"></div>
+
+  <div class="container">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Server đang hoạt động
+    </div>
+
+    <h1>
+      Chạy bằng<br/>
+      <span class="green">Nginx</span> &amp; <span class="purple">Docker</span>
+    </h1>
+
+    <p class="subtitle">
+      Trang web tĩnh được phục vụ bởi <strong>nginx:latest</strong> bên trong một Docker container.
+      Không cần backend — chỉ cần HTML thuần và cấu hình Nginx.
+    </p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🐋</div>
+        <div class="card-label">Runtime</div>
+        <div class="card-value green">Docker</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-label">Web Server</div>
+        <div class="card-value green">Nginx</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <div class="card-label">Port</div>
+        <div class="card-value">80</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-label">Loại trang</div>
+        <div class="card-value">Static</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">NGINX:LATEST &nbsp;·&nbsp; DOCKER &nbsp;·&nbsp; BÀI 4</div>
+</body>
+</html>
