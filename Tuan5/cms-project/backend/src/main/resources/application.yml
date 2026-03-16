@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/cmsdb
+    username: cms_user
+    password: cms_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.cms: DEBUG
