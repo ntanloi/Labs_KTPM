@@ -1,0 +1,13 @@
+com\demo\partition\controller\PartitionController.class
+com\demo\partition\repository\UserBasicRepository.class
+com\demo\partition\service\PartitionDemoService.class
+com\demo\partition\repository\FuncProductRepository.class
+com\demo\partition\entity\UserBasic.class
+com\demo\partition\entity\UserHorizontal.class
+com\demo\partition\repository\FuncAuditLogRepository.class
+com\demo\partition\DbPartitionDemoApplication.class
+com\demo\partition\entity\FuncAuditLog.class
+com\demo\partition\entity\UserDetail.class
+com\demo\partition\entity\FuncOrder.class
+com\demo\partition\entity\FuncProduct.class
+com\demo\partition\repository\FuncOrderRepository.class

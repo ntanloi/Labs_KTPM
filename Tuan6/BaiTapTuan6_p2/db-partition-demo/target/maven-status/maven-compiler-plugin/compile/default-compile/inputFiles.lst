@@ -1,0 +1,13 @@
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\entity\UserDetail.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\repository\UserBasicRepository.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\repository\FuncOrderRepository.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\entity\FuncAuditLog.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\entity\FuncOrder.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\controller\PartitionController.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\repository\FuncProductRepository.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\service\PartitionDemoService.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\entity\UserHorizontal.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\DbPartitionDemoApplication.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\entity\UserBasic.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\repository\FuncAuditLogRepository.java
+T:\Labs_KTPM\Tuan6\BaiTapTuan6_p2\db-partition-demo\src\main\java\com\demo\partition\entity\FuncProduct.java
